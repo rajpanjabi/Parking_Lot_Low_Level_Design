@@ -8,10 +8,14 @@ public class Floor {
     private int floorNumber;
     private List<ParkingSlot> slots;
 
-    public Floor(int floorNumber, int slots){
+    public Floor(int floorNumber){
         this.id=UUID.randomUUID();
         this.floorNumber=floorNumber;
         this.slots=new ArrayList<>();
+    }
+
+    public UUID getId(){
+        return this.id;
     }
 
     public int getFloorNumber(){
@@ -24,6 +28,10 @@ public class Floor {
 
     public List<ParkingSlot> getSlot(){
         return this.slots;
+    }
+
+    public int getTotalSlots() {
+        return slots.size();
     }
     public List<ParkingSlot> getAvailableSlots(Vehicle.VehicleType vehicleType){
         List<ParkingSlot> available= new ArrayList<>();

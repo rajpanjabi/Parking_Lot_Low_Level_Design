@@ -1,12 +1,9 @@
 package controller;
 
-import domain.Payment;
 import domain.Receipt;
 import domain.Ticket;
-
 import java.util.Optional;
 import java.util.UUID;
-
 import service.PaymentService;
 import service.PricingService;
 import service.ReceiptService;
@@ -23,11 +20,13 @@ public class ExitController {
     private ReceiptService receiptService;
 
     // constructor
+   
     public ExitController(TicketService ticketService,
     PricingService pricingService,
     PaymentService paymentService,
-    SlotService slotService,
-    ReceiptService receiptService){
+    ReceiptService receiptService,
+    SlotService slotService
+    ){
         this.ticketService=ticketService;
         this.pricingService=pricingService;
         this.paymentService=paymentService;
@@ -51,18 +50,17 @@ public class ExitController {
             }
 
             // Calculate fees
-            double fee=pricingService.calculateFee(ticketId);
+            double fee=pricingService.calculateFee(ticket);
             System.out.println("[CONTROLLER] Fee calculated: " + fee);
 
             // Process Payment
-            Payment.PaymentStatus paymentStatus= PaymentService.processPayment(ticketId, fee);
-            System.out.println("[CONTROLLER] Payment status: " + paymentStatus);
-            if (paymentStatus==Payment.PaymentStatus.FAILED){
-                return new ExitResponse(false, ticketId, fee, "Payment Failed");
+            boolean paymentSuccess= paymentService.processPayment(ticketId, fee);        
+            if (!paymentSuccess) {
+                return new ExitResponse(false, null, fee, "Payment failed");
             }
 
             // Generate Receipt
-            Receipt receipt=ReceiptService.generateReceipt(ticket,fee);
+            Receipt receipt=receiptService.generateReceipt(ticket,fee);
             receiptService.markReceiptAsPaid(receipt);
 
             // Release slot
@@ -81,6 +79,29 @@ public class ExitController {
         }
     
     };
+
+    public String generateReceiptText(UUID ticketId) {
+        System.out.println("[CONTROLLER] Generating receipt text for ticket: " + ticketId);
+        
+        try {
+            Optional<Ticket> ticketOpt = ticketService.getTicket(ticketId);
+            if (ticketOpt.isEmpty()) {
+                return "Ticket not found";
+            }
+            
+            Ticket ticket = ticketOpt.get();
+            double fee = pricingService.calculateFee(ticket);
+            Receipt receipt = receiptService.generateReceipt(ticket, fee);
+            
+            String receiptText = receiptService.generateReceiptText(receipt, ticket);
+            System.out.println("[CONTROLLER] Receipt text generated successfully");
+            return receiptText;
+            
+        } catch (Exception e) {
+            System.out.println("[CONTROLLER] Receipt text generation failed: " + e.getMessage());
+            return "Error generating receipt: " + e.getMessage();
+        }
+    }
 
 
 

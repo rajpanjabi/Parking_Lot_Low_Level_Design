@@ -28,7 +28,7 @@ public class TicketRepository {
         return Optional.ofNullable(tickets.get(ticketId));
     }
 
-    public List<Ticket> getActiveTickets(){
+    public List<Ticket> findActiveTickets(){
         return tickets.values().stream().filter(Ticket:: isActive).toList();
     }
 

@@ -8,15 +8,15 @@ public class Receipt {
     private UUID id;
     private UUID ticketId;
     private LocalDateTime exitTime;
-    private double totalPayment;
+    private double totalFee;
     private Payment.PaymentStatus paymentStatus;
 
 
-    public Receipt(UUID ticketId,double totalPayment){
+    public Receipt(UUID ticketId,double totalFee){
         this.id=UUID.randomUUID();
         this.ticketId=ticketId;
         this.exitTime=LocalDateTime.now();
-        this.totalPayment=totalPayment;
+        this.totalFee=totalFee;
         this.paymentStatus = PaymentStatus.PENDING;
     }
 
@@ -32,16 +32,20 @@ public class Receipt {
         return this.exitTime;
     }
 
-    public double getTotalPayment(){
-        return this.totalPayment;
+    public double getTotalFee(){
+        return this.totalFee;
     }
 
-    public void setPaymentSuccess(){
-        this.paymentStatus=PaymentStatus.SUCCESS;
+    public Payment.PaymentStatus getPaymentStatus(){
+        return this.paymentStatus;
     }
 
-    public void setPaymentFailure(){
-        this.paymentStatus=PaymentStatus.FAILED;
+    public void markAsPaid() {
+        this.paymentStatus = PaymentStatus.SUCCESS;
+    }
+
+    public void markAsFailed() {
+        this.paymentStatus = PaymentStatus.FAILED;
     }
 
 

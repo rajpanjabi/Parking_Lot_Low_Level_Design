@@ -41,13 +41,14 @@ public class Payment {
         return this.status;
     }
 
-    public void markPaymentSuccess(){
-        this.status=PaymentStatus.SUCCESS;
+    public void markAsSuccess() {
+        this.status = PaymentStatus.SUCCESS;
     }
-    
-    public void markPaymentFailure(){
-        this.status=PaymentStatus.FAILED;
+
+    public void markAsFailed() {
+        this.status = PaymentStatus.FAILED;
     }
+
 
     @Override
     public String toString() {

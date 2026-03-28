@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class SlotRepository {
     // save, release, allocateSlot, getAvailableSlots
@@ -35,6 +36,15 @@ public class SlotRepository {
             return slot;
             });
     }
+
+    public Map<Vehicle.VehicleType, Long> getSlotStatistics() {
+        return slots.values().stream()
+                .collect(Collectors.groupingBy(
+                    ParkingSlot::getSlotType,
+                    Collectors.counting()
+                ));
+    }
+
     public List<ParkingSlot> getAvailableSlots(Vehicle.VehicleType vehicleType){
         return slots.values().stream()
         .filter(slot -> slot.getSlotType()==vehicleType && !slot.isOccupied())
